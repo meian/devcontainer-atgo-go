@@ -1,0 +1,67 @@
+#!/bin/bash -e
+
+command -v code >/dev/null || {
+    echo "Visual Studio Code is not installed."
+    exit 1
+}
+
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE}")"; pwd)
+DATAFILE="$SCRIPT_DIR/vsc-extensions.list"
+
+if [ "$1" == "--help" ]; then
+    cat <<HELP
+Usage:
+    add-vsc-extension [extension-id]
+        extension-id: vscode extension id to install
+
+If extension-id is not specified, list all extensions in $DATAFILE.
+HELP
+    exit 0
+fi
+
+if [ "$1" == "--complete" ]; then
+    cscript=$(cat << 'SCRIPT'
+_vsc_ext_completions() {
+    local cur=${COMP_WORDS[COMP_CWORD]}
+    COMPREPLY=()
+
+    local datafile='#DATAFILE#'
+    [ -f "$datafile" ] || return
+
+    local installed=$(code --list-extensions)
+    local extensions=()
+    mapfile -t extensions < "$datafile"
+
+    local candidates=()
+    for ext in "${extensions[@]}"; do
+        if [[ ! " $(echo ${installed[@]}) " =~ " $ext " ]]; then
+            candidates+=("$ext")
+        fi
+    done
+
+    COMPREPLY=( $(compgen -W "${candidates[*]}" -- "$cur") )
+}
+SCRIPT
+)
+
+    eval "$(echo "$cscript" | sed -e "s|#DATAFILE#|$DATAFILE|")"
+    complete -F _vsc_ext_completions add-vsc-extension
+
+    return
+fi
+
+ext="$1"
+
+if [ -n "$ext" ]; then
+    code --install-extension "$ext"
+else
+    echo "all extensions list:"
+    installed="$(code --list-extensions)"
+    cat "$DATAFILE" | while read line; do
+        if [[ " $(echo ${installed[@]}) " =~ " $line " ]]; then
+            echo "(installed) $line"
+        else
+            echo "            $line"
+        fi
+    done
+fi

@@ -25,7 +25,12 @@ RUN chmod +x /usr/local/bin/update-atgo
 
 USER ${USERNAME}
 
-RUN gocomplete -install -y
-RUN update-atgo
+RUN mkdir -p /home/${USERNAME}/.local/bin
+COPY --chown=${USERNAME}:${USERNAME} ./resources/add-vsc-extension /home/${USERNAME}/.local/bin/add-vsc-extension
+RUN chmod +x /home/${USERNAME}/.local/bin/add-vsc-extension
+COPY --chown=${USERNAME}:${USERNAME} ./resources/vsc-extensions.list /home/${USERNAME}/.local/bin/vsc-extensions.list
 
-RUN ll > /dev/null || echo 'alias ll="ls -alF"' >> "$HOME/.bashrc"
+RUN gocomplete -install -y \
+    && update-atgo \
+    && ll > /dev/null || echo 'alias ll="ls -alF"' >> "$HOME/.bashrc" \
+    && echo 'source add-vsc-extension --complete' >> "$HOME/.bashrc"
