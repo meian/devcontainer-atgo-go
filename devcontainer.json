@@ -15,5 +15,13 @@
 	],
 	"workspaceMount": "source=${localWorkspaceFolder},target=/atcoder,type=bind,consistency=cached",
 	"workspaceFolder": "/atcoder",
-	"remoteUser": "vscode"
+	"remoteUser": "vscode",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"golang.go",
+				"MS-CEINTL.vscode-language-pack-ja"
+			]
+		}
+	}
 }
