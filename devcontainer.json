@@ -8,7 +8,6 @@
 			"USERNAME": "vscode"
 		}
 	},
-	"postCreateCommand": "./.devcontainer/postCommand.sh vscode && atgo version --long",
 	"mounts": [
 		"source=go-cache-volume,target=/home/vscode/.cache/go-build,type=volume",
 		"source=go-pkg-volume,target=/go/pkg,type=volume"
@@ -16,6 +15,7 @@
 	"workspaceMount": "source=${localWorkspaceFolder},target=/atcoder,type=bind,consistency=cached",
 	"workspaceFolder": "/atcoder",
 	"remoteUser": "vscode",
+	"postCreateCommand": "./.devcontainer/postCommand.sh vscode && atgo version --long",
 	"customizations": {
 		"vscode": {
 			"extensions": [
