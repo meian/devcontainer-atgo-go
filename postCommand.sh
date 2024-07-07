@@ -13,7 +13,7 @@ atgo completion bash | sudo tee /etc/bash_completion.d/atgo > /dev/null
 
 LSCRIPT="$(cd "$(dirname "$0")"; pwd)/postCommand.local.sh"
 if [ -x "$LSCRIPT" ]; then
-    "$LSCRIPT" "$u"
+    "$LSCRIPT" "$user"
 fi
 
 atgo version --long
