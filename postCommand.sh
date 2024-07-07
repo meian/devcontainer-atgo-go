@@ -1,11 +1,11 @@
 #!/bin/bash
 
-u=$1
+user=$1
 
 sudo mkdir -p /go/pkg
-sudo chown vscode:golang /go/pkg
-sudo mkdir -p "/home/$u/.cache/go-build"
-sudo chown vscode:vscode "/home/$u/.cache/go-build"
+sudo chown -R "$user:golang" /go/pkg
+sudo mkdir -p "/home/$user/.cache/go-build"
+sudo chown "$user:$user" "/home/$user/.cache/go-build"
 
 source ~/.profile
 
