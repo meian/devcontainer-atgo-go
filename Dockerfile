@@ -5,7 +5,7 @@ RUN go install github.com/posener/complete/gocomplete@latest \
     && go install github.com/cweill/gotests/gotests@v1.6.0 \
     && go install github.com/go-delve/delve/cmd/dlv@v1.22.1
 
-FROM mcr.microsoft.com/devcontainers/go:1.20-bookworm as atcoder
+FROM golang:1.20.6-bookworm as atcoder
 
 ARG USERNAME=vscode
 
@@ -14,9 +14,18 @@ RUN apt-get update \
     bash-completion=1:2.* \
     curl=7.* \
     sqlite3=3.* \
+    sudo=1.9.* \
     vim=2:9.* \
     && apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/* /tmp/library-scripts/ \
-    && ln -sf /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
+    && ln -sf /usr/share/zoneinfo/Asia/Tokyo /etc/localtime \
+    && mkdir -p /etc/bash_completion.d \
+    && groupadd -g 999 golang \
+    && curl -fL https://raw.githubusercontent.com/devcontainers/features/feature_go_1.2.2/src/common-utils/scripts/bash_theme_snippet.sh -o /etc/bash_prompt.sh \
+    && chmod +x /etc/bash_prompt.sh
+RUN grep -E "^$USERNAME:" /etc/group || groupadd $USERNAME -g 1000
+RUN useradd -m -g $USERNAME -u 1000 -s /bin/bash -G golang $USERNAME \
+    && chown -R $USERNAME:golang /go \
+    && echo "$USERNAME ALL=(root) NOPASSWD:ALL" > /etc/sudoers.d/$USERNAME
 
 COPY --from=env-builder /go/bin /go/bin
 
@@ -33,4 +42,5 @@ COPY --chown=${USERNAME}:${USERNAME} ./resources/vsc-extensions.list /home/${USE
 RUN gocomplete -install -y \
     && update-atgo \
     && ll > /dev/null || echo 'alias ll="ls -alF"' >> "$HOME/.bashrc" \
+    && echo 'source /etc/bash_prompt.sh' >> "$HOME/.bashrc" \
     && echo 'source add-vsc-extension --complete' >> "$HOME/.bashrc"

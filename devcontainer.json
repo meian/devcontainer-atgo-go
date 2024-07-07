@@ -19,7 +19,7 @@
 	"workspaceMount": "source=${localWorkspaceFolder},target=/atcoder,type=bind,consistency=cached",
 	"workspaceFolder": "/atcoder",
 	"remoteUser": "vscode",
-	"postCreateCommand": "./.devcontainer/postCommand.sh vscode && atgo version --long",
+	"postCreateCommand": "./.devcontainer/postCommand.sh vscode",
 	"customizations": {
 		"vscode": {
 			"extensions": [
