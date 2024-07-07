@@ -27,12 +27,12 @@ RUN useradd -m -g $USERNAME -u 1000 -s /bin/bash -G golang $USERNAME \
     && chown -R $USERNAME:golang /go \
     && echo "$USERNAME ALL=(root) NOPASSWD:ALL" > /etc/sudoers.d/$USERNAME
 
-COPY --from=env-builder /go/bin /go/bin
-
 COPY --chown=${USERNAME}:${USERNAME} ./resources/update-atgo /usr/local/bin/update-atgo
 RUN chmod +x /usr/local/bin/update-atgo
 
 USER ${USERNAME}
+
+COPY --from=env-builder --chown=$USERNAME:golang /go/bin /go/bin
 
 RUN mkdir -p /home/${USERNAME}/.local/bin
 COPY --chown=${USERNAME}:${USERNAME} ./resources/add-vsc-extension /home/${USERNAME}/.local/bin/add-vsc-extension
