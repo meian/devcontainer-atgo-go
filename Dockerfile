@@ -1,11 +1,11 @@
-FROM golang:1.22.4-bookworm AS env-builder
+FROM golang:1.22.6-bookworm AS env-builder
 
 RUN go install github.com/posener/complete/gocomplete@latest \
     && go install golang.org/x/tools/gopls@v0.16.1 \
     && go install github.com/cweill/gotests/gotests@v1.6.0 \
     && go install github.com/go-delve/delve/cmd/dlv@v1.22.1
 
-FROM golang:1.20.6-bookworm as atcoder
+FROM golang:1.22.6-bookworm as atcoder
 
 ARG USERNAME=vscode
 
